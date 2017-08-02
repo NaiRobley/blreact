@@ -110,7 +110,7 @@ export class Login extends React.Component {
                     localStorage.setItem('access_token', response.data['access_token']);
                     localStorage.setItem('login_status', true);
                     localStorage.setItem('username', response.data['username']);
-                    <Redirect to="/sbucketlists" /> 
+                    return (<Redirect to="/bucketlists" /> );
                 } else {
                     localStorage.setItem('access_token', '');
                     localStorage.setItem('login_status', false);
