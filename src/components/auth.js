@@ -3,11 +3,163 @@ import { Link, Redirect } from 'react-router-dom';
 
 var axios = require('axios');
 
-export class User extends React.Component {
+export class Profile extends React.Component {
+    constructor () {
+        super();
+        this.state = {
+            user: {
+                username: localStorage.getItem('username'),
+                email: localStorage.getItem('email'),
+                showNewUsernameForm: false,
+                showNewEmailForm: false,
+                showNewPasswordForm: false
+            }
+        }
+    }
+
+    // Show edit username form
+    showEditUsernameForm() {
+        this.setState({showNewUsernameForm: !this.state.showNewUsernameForm});
+    }
+
+    // Show edit username form
+    showEditEmailForm() {
+        this.setState({showNewEmailForm: !this.state.showNewEmailForm});
+    }
+
+    // Show edit password form
+    showEditPasswordForm() {
+        this.setState({showNewPasswordForm: !this.state.showNewPasswordForm})
+    }
+
+    // Set a new user name for the user
+    handleNewUsername(e) {
+        e.preventDefault();
+        axios.put('http://localhost:5000/auth/user/', 
+                    JSON.stringify({'username': this.state.user.username, 'password': this.refs.password.value, 'new_username': this.refs.newUsername.value}),
+                    {headers: {'Content-Type': "application/json"}}
+            )
+            .then((response) => {
+                window.location.reload();
+                localStorage.setItem('username', response.data['username']);
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.error(error);
+                return <Redirect to="/login" />
+            });        
+    }
+
+    // Set a new email for the user
+    handleNewEmail(e) {
+        e.preventDefault();
+        axios.put('http://localhost:5000/auth/user/', 
+                    JSON.stringify({'username': this.state.user.username, 'password': this.refs.password.value, 'new_email': this.refs.newEmail.value}),
+                    {headers: {'Content-Type': 'application/json'}}
+            )
+            .then((response) => {
+                window.location.reload();
+                localStorage.setItem('email', response.data['email']);
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.error(error);
+                return <Redirect to="/login" />
+            });
+    }
+
+    // Set a new password for the user
+    handleNewPassword(e) {
+        e.preventDefault();
+        axios.put('http://localhost:5000/auth/user/',
+                    JSON.stringify({'username': this.state.user.username, 'password': this.refs.oldPassword.value, 'new_password': this.refs.newPassword.value}),
+                    {headers: {'Content-Type': "application/json"}}
+            )
+            .then((response) => {
+                window.location.reload();
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.error(error);
+                return <Redirect to="/login" />
+            });
+    }
+
     render() {
+        let s1 = {verticalAlign: 'middle'}
+        let s2 = {textAlign: 'right'}
         return(
             <div>
-                Edit a user details here
+
+                <div className="mui-appbar">
+                    <table width='100%'>
+                        <tbody>
+                            <tr style={s1}>
+                                <td className="mui--appbar-height"> <Link to="/"> BKT </Link> </td>
+                                <td className="mui--appbar-height" style={s2}> <Link to="/bucketlists"> Bucketlists </Link> </td>
+                                <td className="mui--appbar-height" style={s2}> <Link to="/logout"> Logout </Link> </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="card mui-col-md-4">
+                    <h4><b> Your Details </b></h4>
+                    <hr />
+                    Username: {this.state.user.username} <br />
+                    
+                    Email: {this.state.user.email}
+
+                    <hr />
+
+                    <button className="mui-btn mui-btn--raised" onClick={() => this.showEditUsernameForm()}> Update Username </button>
+                    <button className="mui-btn mui-btn--raised" onClick={() => this.showEditEmailForm()}> Update Email </button>
+                    <button className="mui-btn mui-btn--raised" onClick={() => this.showEditPasswordForm()}> Update Password </button>
+
+
+                    {
+                        this.state.showNewUsernameForm ?
+
+                                <div>
+                                    <form onSubmit={this.handleNewUsername.bind(this)} className="mui-form">
+                                        <input type="text" ref="newUsername" placeholder="Enter new username"/>
+                                        <input type="password" ref="password" placeholder="Enter password" />
+                                        <button type="submit" className="mui-btn mui-btn--raised">Submit</button>
+                                    </form> 
+                                </div>
+
+                            : null   
+                    }
+
+                    {
+                        this.state.showNewEmailForm ?
+
+                                <div>
+                                    <form onSubmit={this.handleNewEmail.bind(this)} className="mui-form">
+                                        <input type="email" ref="newEmail" placeholder="Enter new email address"/>
+                                        <input type="password" ref="password" placeholder="Enter password" />
+                                        <button type="submit" className="mui-btn mui-btn--raised">Submit</button>
+                                    </form> 
+                                </div>
+
+                            : null
+                    }
+
+                    {
+                        this.state.showNewPasswordForm ?
+
+                                <div>
+                                    <form onSubmit={this.handleNewPassword.bind(this)} className="mui-form">
+                                        <input type="password" ref="oldPassword" placeholder="Enter old password" />
+                                        <input type="password" ref="newPassword" placeholder="Enter new password" />
+                                        <button type="submit" className="mui-btn mui-btn--raised"> Submit </button>
+                                    </form> 
+                                </div>
+
+                            : null
+                    }                    
+
+                </div>
             </div>
         );
     }
@@ -110,11 +262,13 @@ export class Login extends React.Component {
                     localStorage.setItem('access_token', response.data['access_token']);
                     localStorage.setItem('login_status', true);
                     localStorage.setItem('username', response.data['username']);
-                    return (<Redirect to="/bucketlists" /> );
+                    localStorage.setItem('email', response.data['email']);
+                    window.location.reload();
                 } else {
-                    localStorage.setItem('access_token', '');
+                    localStorage.setItem('access_token', null);
                     localStorage.setItem('login_status', false);
-                    localStorage.setItem('username', '');                   
+                    localStorage.setItem('username', null);
+                    localStorage.setItem('email', null);                 
                 }
                 console.log(response.data);
                 alert(response.data['message']);
@@ -164,12 +318,17 @@ export class Login extends React.Component {
 }
 
 export class Logout extends React.Component {
+    componentWillMount() {
+    }
+
     logoutUser() {
         localStorage.setItem('login_status', false);
         localStorage.setItem('access_token', '');
         localStorage.setItem('username', '');
+        localStorage.setItem('email', '');
         window.location.reload();
     }
+
     render () {
         return (
         <div>
