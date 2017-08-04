@@ -1,8 +1,5 @@
 import React from 'react';
-import { Link, Redirect } from 'react-router-dom';
-
-var axios = require('axios');
-
+import { Link } from 'react-router-dom';
 
 export class Home extends React.Component {
 
@@ -23,9 +20,7 @@ export class Home extends React.Component {
                         <span className="border">WELCOME TO BKT!</span>
                     </div>
                     <span className="capt"> Have a goal you want to achieve before time runs out? </span>
-                    <span className="caption2"> Login | Register </span>
-                    {/* {(login_status) === 'true' )? (<span> <Link to='/' className="caption2"> Mine </Link> </span>) : (<span> <Link to='/login' className="caption2"> Login | Register </Link> </span>) } */}
-                    <span> <Link to='/login' className="caption2"> Login | Register </Link> </span>
+                    <span> <Link to='/login' className="caption2"> This Way In.. </Link> </span>
                 </div>
 
                 <div className="mui-container" style={style1}>
