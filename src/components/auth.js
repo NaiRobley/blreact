@@ -122,8 +122,12 @@ export class Profile extends React.Component {
 
                                 <div>
                                     <form onSubmit={this.handleNewUsername.bind(this)} className="mui-form">
-                                        <input type="text" ref="newUsername" placeholder="Enter new username"/>
-                                        <input type="password" ref="password" placeholder="Enter password" />
+                                        <div className="mui-textfield">
+                                            <input type="text" ref="newUsername" placeholder="Enter new username"/>
+                                        </div>
+                                        <div className="mui-textfield">
+                                            <input type="password" ref="password" placeholder="Enter password" />
+                                        </div>
                                         <button type="submit" className="mui-btn mui-btn--raised">Submit</button>
                                     </form> 
                                 </div>
@@ -136,8 +140,12 @@ export class Profile extends React.Component {
 
                                 <div>
                                     <form onSubmit={this.handleNewEmail.bind(this)} className="mui-form">
-                                        <input type="email" ref="newEmail" placeholder="Enter new email address"/>
-                                        <input type="password" ref="password" placeholder="Enter password" />
+                                        <div className="mui-textfield">
+                                            <input type="email" ref="newEmail" placeholder="Enter new email address"/>
+                                        </div>
+                                        <div className="mui-textfield">
+                                            <input type="password" ref="password" placeholder="Enter password" />
+                                        </div>
                                         <button type="submit" className="mui-btn mui-btn--raised">Submit</button>
                                     </form> 
                                 </div>
@@ -150,8 +158,12 @@ export class Profile extends React.Component {
 
                                 <div>
                                     <form onSubmit={this.handleNewPassword.bind(this)} className="mui-form">
-                                        <input type="password" ref="oldPassword" placeholder="Enter old password" />
-                                        <input type="password" ref="newPassword" placeholder="Enter new password" />
+                                        <div className="mui-textfield">
+                                            <input type="password" ref="oldPassword" placeholder="Enter old password" />
+                                        </div>
+                                        <div className="mui-textfield">
+                                            <input type="password" ref="newPassword" placeholder="Enter new password" />
+                                        </div>
                                         <button type="submit" className="mui-btn mui-btn--raised"> Submit </button>
                                     </form> 
                                 </div>
