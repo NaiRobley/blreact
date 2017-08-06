@@ -181,68 +181,93 @@ export class BucketLists extends React.Component {
             });  
     }
 
+    logoutUser() {
+        localStorage.setItem('login_status', false);
+        localStorage.setItem('access_token', '');
+        localStorage.setItem('username', '');
+        localStorage.setItem('email', '');
+        window.location.reload();
+    }    
+
     render () {
         if (localStorage.getItem('login_status') !== 'true') {
             return <Redirect to="/login" />
         }
-        let s1 = {verticalAlign: 'middle'}
-        let s2 = {textAlign: 'right', float: 'right'}
+        let s1 = {verticalAlign: 'middle'};
+        let s2 = {textAlign: 'right', float: 'right'};
+        let styleNext = {float: 'right'};
+        let stylePrevious = {float: 'left'};
+        let styleText = {align: 'center'};
         return (
         <div>
-
             <div className="mui-appbar">
                 <table width='100%'>
                     <tbody>
                         <tr style={s1}>
                             <td className="mui--appbar-height"> <Link to="/"> BKT </Link> </td>
                             <td className="mui--appbar-height" style={s2}> <Link to="/profile"> &nbsp; Profile &nbsp; </Link> </td>
-                            <td className="mui--appbar-height" style={s2}> <Link to="/logout"> &nbsp; Logout &nbsp; </Link> </td>
+                            <td className="mui--appbar-height" style={s2}> <a onClick={this.logoutUser}> &nbsp; Logout &nbsp; </a> </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <div className="mui-container">
+                <div className="mui-row">
+                    {/* New Bucket List*/}
+                    <div>
+                        <form onSubmit={this.handleNewBucketList.bind(this)} className="mui-form">
+                            <div className="mui-textfield mui-col-lg-4 mui-col-md-4">
+                                <input type="text" ref="name" placeholder="Enter new bucketlist name"/>
+                            </div>
+                            <button type="submit" className="mui-btn mui-btn--raised">Submit</button>
+                        </form>
+                    </div>
 
-            {/* New Bucket List*/}
-            <div>
-                <form onSubmit={this.handleNewBucketList.bind(this)} className="mui-form">
-                    <input type="text" ref="name" placeholder="Enter new bucketlist name"/>
-                    <button type="submit" className="mui-btn mui-btn--raised">Submit</button>
-                </form>
+                    {/* Search for bucket lists*/}
+                    <div>
+                        <form onSubmit={this.handleSearch.bind(this)} className="mui-form">
+                            <div className="mui-textfield mui-col-lg-4 mui-col-md-4">
+                                <input type="text" ref="query" placeholder="Enter new bucketlist name" />
+                            </div>
+                            <div className="mui-textfield mui-col-lg-1 mui-col-md-1">
+                                <input type="text" ref="limit" placeholder="Limit" />
+                            </div>
+                            <button type="submit" className="mui-btn mui-btn--raised">Submit</button>
+                        </form>
+                    </div>
+                </div>   
+                             
+                <div className="mui-row">
+                    <ul> 
+                        {this.state.bucketlists.map(bucketlist => <li key={bucketlist.id}> 
+
+                            <SingleBucketList bucketlist={bucketlist}/>
+                            
+                                </li>)} 
+                    </ul>
+
+                </div>
+
+                    <div className="mui-row">
+                        {/* Show previous page button */}
+                        {
+                            this.state.previous_page ?
+                                <button onClick={(e) => this.handlePreviousPage(this.state.previous_page, e)}  className="mui-btn mui-btn--raised" style={stylePrevious}> Previous </button>
+                                : null
+                        }
+                        
+                        {/* Show number of bucket lists */}
+                        <span style={styleText}> {this.state.bucketlists.length} Bucket Lists </span>
+
+                        {/* Show next page button */}
+                        {
+                            this.state.next_page ?
+                                <button onClick={(e) => this.handleNextPage(this.state.next_page, e)} className="mui-btn mui-btn--raised" style={styleNext}> Next </button>
+                                : null
+                        }
+                    </div>
+
             </div>
-
-            {/* Search for bucket lists*/}
-            <div>
-                <form onSubmit={this.handleSearch.bind(this)} className="mui-form">
-                    <input type="text" ref="query" placeholder="Enter new bucketlist name" />
-                    <input type="text" ref="limit" placeholder="Limit" />
-                    <button type="submit" className="mui-btn mui-btn--raised">Submit</button>
-                </form>
-            </div>
-
-            <ul> 
-                {this.state.bucketlists.map(bucketlist => <li key={bucketlist.id}> 
-
-                    <SingleBucketList bucketlist={bucketlist}/>
-                    
-                        </li>)} 
-            </ul>
-            {/* Show previous page button */}
-            {
-                this.state.previous_page ?
-                    <button onClick={(e) => this.handlePreviousPage(this.state.previous_page, e)}  className="mui-btn mui-btn--raised"> Previous </button>
-                    : null
-            }
-            
-
-            {this.state.bucketlists.length} Bucket Lists
-
-            {/* Show next page button */}
-            {
-                this.state.next_page ?
-                    <button onClick={(e) => this.handleNextPage(this.state.next_page, e)} className="mui-btn mui-btn--raised"> Next </button>
-                    : null
-            }            
-
         </div>
         );
     }
@@ -294,7 +319,6 @@ export class SingleBucketList extends React.Component {
                     {headers: {'Authorization': access_token, 'Content-Type': "application/json"}}
             )
             .then((response) => {
-                this.state.bucketlists.splice(this.state.bucketlists.indexOf(bucketlist), 1);
                 window.location.reload();
                 console.log(response);
             })
@@ -326,7 +350,7 @@ export class SingleBucketList extends React.Component {
         return(
             <div>
 
-                <div className="card mui-col-md-4">
+                <div className="card mui-col-md-6 mui-col-lg-4">
                     {/* Bucket List Name */}
                     <h4><b> {this.state.bucketlist.name}  </b></h4> 
                     <hr />
@@ -338,17 +362,23 @@ export class SingleBucketList extends React.Component {
                                 </li>)} 
                         </ul>
                     <hr/>
+
+                    <i className="material-icons nI" onClick={() => this.showAddForm()}>add</i>
+                    <i className="material-icons nI" onClick={() => this.showEditForm()}>edit</i>
+                    <i className="material-icons nI" onClick={(e) => this.handleDeleteBucketList(this.state.bucketlist, e)}>delete</i>                    
                     
-                    <button className="mui-btn mui-btn--raised" onClick={() => this.showAddForm()}> Add </button>
+                    {/* <button className="mui-btn mui-btn--raised" onClick={() => this.showAddForm()}> Add </button>
                     <button className="mui-btn mui-btn--raised" onClick={() => this.showEditForm()}> Edit </button>
-                    <button className="mui-btn mui-btn--raised" onClick={(e) => this.handleDeleteBucketList(this.state.bucketlist, e)}> Delete </button>
+                    <button className="mui-btn mui-btn--raised" onClick={(e) => this.handleDeleteBucketList(this.state.bucketlist, e)}> Delete </button> */}
 
                     {
                         this.state.showNewItemForm ?
 
                                 <div id="newForm">
                                     <form onSubmit={(e) => this.handleNewItem(this.state.bucketlist, e)} className="mui-form">
-                                        <input type="text" ref="newItemName" placeholder="Add a new item"/>
+                                        <div className="mui-textfield">
+                                            <input type="text" ref="newItemName" placeholder="Add a new item"/>
+                                        </div>
                                         <button type="submit" className="mui-btn mui-btn--raised">Submit</button>
                                     </form> 
                                 </div>
@@ -361,7 +391,9 @@ export class SingleBucketList extends React.Component {
 
                                 <div id="editForm">
                                     <form onSubmit={(e) => this.handleEditBucketList(this.state.bucketlist, e)} className="mui-form">
-                                        <input type="text" ref="newName" placeholder={this.state.bucketlist.name}/>
+                                        <div className="mui-textfield">
+                                            <input type="text" ref="newName" placeholder={this.state.bucketlist.name}/>
+                                        </div>
                                         <button type="submit" className="mui-btn mui-btn--raised">Submit</button>
                                     </form> 
                                 </div>
@@ -383,13 +415,13 @@ export class Items extends React.Component {
         this.state = {
             item: props.item,
             bucketlist: props.bucketlist,
-            showEditForm: false
+            showEditItemForm: false
         }
     }
 
     // show edit bucket list name form
-    showEditForm(){
-        this.setState({showEditForm: !this.state.showEditForm});
+    showEditItemForm(){
+        this.setState({showEditItemForm: !this.state.showEditItemForm});
     }
 
     // Edit an item name
@@ -448,27 +480,29 @@ export class Items extends React.Component {
     }
 
     render() {
+        let newStyle = {'float': 'right'};
         return (
             <div>
 
                 <div className="mui-checkbox">
-                    <form>
+                    <form className="mui-form">
                         <label>
                         <input type="checkbox" value="" checked={this.state.item.done} onChange={(e) => this.handleMarkItemDone(this.state.item, e)}/>
                         {/* Item Name*/}
                         &nbsp; &nbsp; {this.state.item.name} 
                         </label>
+                         <i className="material-icons nI" style={newStyle} onClick={(e) => this.handleDeleteItem(this.state.item, e)}>delete</i>  
+                        <i className="material-icons nI" style={newStyle} onClick={() => this.showEditItemForm()}>edit</i> 
                     </form>
 
-                    <button className="mui-btn mui-btn--raised" onClick={() => this.showEditForm()}> Edit </button>
-                    <button className="mui-btn mui-btn--raised" onClick={(e) => this.handleDeleteItem(this.state.item, e)}> Delete </button>
-
                     {
-                        this.state.showEditForm ?
+                        this.state.showEditItemForm ?
 
                                 <div id="editForm">
                                     <form onSubmit={(e) => this.handleEditItem(this.state.item, e)} className="mui-form">
-                                        <input type="text" ref="newItemName" placeholder={this.state.item.name}/>
+                                        <div className="mui-textfield">
+                                            <input type="text" ref="newItemName" placeholder={this.state.item.name}/>
+                                        </div>
                                         <button type="submit" className="mui-btn mui-btn--raised">Submit</button>
                                     </form> 
                                 </div>
