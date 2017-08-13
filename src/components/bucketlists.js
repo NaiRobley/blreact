@@ -240,7 +240,7 @@ export class BucketLists extends React.Component {
                 <div className="mui-row">
                     <ul> 
                         {this.state.bucketlists.map(bucketlist => <li key={bucketlist.id}> 
-
+                            {/* Component for a single bucket list */}
                             <SingleBucketList bucketlist={bucketlist}/>
                             
                                 </li>)} 
@@ -357,7 +357,7 @@ export class SingleBucketList extends React.Component {
                         {/* Bucket List Items */}
                         <ul>
                             {this.state.bucketlist.items.map(item => <li key={item.id}> 
-                                
+                                {/* Single Item of a bucket list */}
                                 <Items item={item} bucketlist={this.state.bucketlist}/>
                                 </li>)} 
                         </ul>
